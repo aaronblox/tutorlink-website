@@ -1,0 +1,438 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #194422;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    color: white;
+
+    background: radial-gradient(circle at top, #0f2a17, #091a0d 70%);
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: #d4af37;
+}
+
+.logo img {
+    width: 40px;
+}
+
+.search-bar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Poppins', sans-serif;
+}
+
+.search-bar input {
+    padding: 10px;
+    width: 350px;
+
+    border: none;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #123319;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.actions button {
+    margin-left: 10px;
+    padding: 10px 15px;
+
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+button:hover, .btn:hover {
+    opacity: 0.8;
+}
+
+.login {
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+}
+
+.register {
+    background-color: #123319;
+    color: white;
+}
+
+nav {
+    background-color: rgba(212, 175, 55, 0.9);
+    backdrop-filter: blur(6px);
+    padding: 10px;
+    position: sticky;
+    top: 70px;
+    z-index: 999;
+}
+
+nav a {
+    color: white;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #194422;
+}
+
+nav .highlight {
+    background-color: #194422;
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+nav .highlight:hover {
+    background-color: #123319;
+}
+
+main {
+    padding: 20px;
+}
+
+main a {
+    text-decoration: none;
+}
+
+button {
+    background-color: #123319;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.auswahl {
+    animation: fadeIn 1s ease 1s;
+    animation-fill-mode: backwards;
+}
+
+.btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #123319, #1f5a2c);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+.btn.secondary {
+    background-color: transparent;
+    border: 1px solid white;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+
+    background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/office-background.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    
+    border-radius: 12px;
+    
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+.hero-slider {
+    overflow: hidden;
+    position: relative;
+    height: 450px;
+}
+
+.slides {
+    display: flex;
+    width: 100%;
+    animation: slide 12s infinite;
+}
+
+.slide {
+    width: 100%;
+    height: 450px;
+    flex-shrink: 0;
+    
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 40px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slide {
+    0% { transform: translateX(0); }
+    30% { transform: translateX(0); }
+
+    33% { transform: translateX(-100%); }
+    63% { transform: translateX(-100%); }
+
+    66% { transform: translateX(-200%); }
+    96% { transform: translateX(-200%); }
+    
+    100% { transform: translateX(0); }
+}
+
+.slide:nth-child(1) {
+    background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero1.jpg');
+}
+
+.slide:nth-child(2) {
+    background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero2.jpg');
+}
+
+.slide:nth-child(3) {
+    background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero3.jpg');
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hero-slider h1 {
+    font-size: 50px;
+    margin-bottom: 10px;
+    
+    background: linear-gradient(90deg, #d4af37, #f1d76a);
+    background-clip: text;
+    
+    -webkit-text-fill-color: transparent;
+    animation: slideDown 0.8s ease;
+}
+
+.hero-slider p {
+    font-size: 24px;
+    background: white;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideDown 0.8s ease 0.3s;
+    animation-fill-mode: backwards;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.hero p {
+    font-size: 22px;
+    margin-bottom: 30px;
+    animation: fadeIn 1s ease 0.5s;
+    animation-fill-mode: backwards;
+}
+
+.category-list {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.category-list a {
+    color: white;
+    text-decoration: none;
+}
+
+.category {
+    background: linear-gradient(135deg, #194422, #123319);
+    padding: 20px 25px;
+    border-radius: 12px;
+    
+    text-align: center;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.category:hover {
+    background: linear-gradient(135deg, #d4af37, #f1d76a);
+    color: black;
+
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.tutor-section {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: rgba(25, 68, 34, 0.4);
+    border-radius: 12px;
+    backdrop-filter: blur(6px);
+}
+
+.tutor-section h2 {
+    margin-bottom: 10px;
+    border-left: 4px solid #d4af37;
+    padding-left: 10px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+}
+
+.card {
+    background: linear-gradient(180deg, #194422, #123319);
+    border-radius: 12px;
+    overflow: hidden;
+    
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.card h3 {
+    margin: 10px;
+    font-size: 18px;
+} 
+
+.card p {
+    margin: 0 10px 10px 10px;
+    font-size: 14px;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.card-row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.card-row::-webkit-scrollbar {
+    display: none;
+}
+
+.rating {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.category-tag {
+    background: linear-gradient(135deg, #d4af37, #f1d76a, #b8962e);
+    color: black;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 12px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #194422;
+    margin-top: 40px;
+}
+
+footer a {
+    color: white;
+}
+
+.socials {
+    margin-top: 15px;
+}
+
+.socials a {
+    background-color: #194422;
+    padding: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    color: white;
+    margin: 0 10px;
+    font-size: 22px;
+    transition: all 0.3s;
+}
+
+.socials a:hover {
+    color: #d4af37;
+    transform: translateY(-3px) scale(1.2);
+}
+
+.fa-youtube:hover {
+    color: #ff0000;
+}
+
+.fa-instagram:hover {
+    color: #e1306c;
+}
+
+.fa-x-twitter:hover {
+    color: #1da1f2;
+}
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+}

@@ -1,0 +1,28 @@
+Projekt Website mit Wirtschaftskurs - Zusammenfassung der Antworten:
+
+	⁃	Unternehmen (Name): Tutorlink / Plattform
+	⁃	Farbe: Gold/Grün
+	⁃	Werbung: Mit Content Creatorn
+	⁃	Ziel: So viele Leute wie möglich neue Skills lernen
+	⁃	Kontaktdaten: Unten auf der Website
+	⁃	Texte: Kurz und knackig
+	⁃	Bilder: Viele Bilder, die bei der Homepage den Nutzern als Orientierung dienen
+	⁃	Schriftart: Moderne Schriftart, passend zu den “edlen” Farben, “royal”
+	⁃	Beispiel-Websites: Whop, Skillshare
+	⁃	Menü: Beliebig
+
+Wünsche:
+
+	⁃	Suchleiste
+	⁃	Registrierungsbutton/Anmeldebutton
+	⁃	Oberthemen (Technik, Sport)
+	⁃	Beispiel-Tutoren
+	⁃	Bewertungssystem (Stern)
+	⁃	Suchfunktion
+	⁃	“Meine Kurse”-Reiter
+
+Wichtige Informationen:
+
+	⁃	Dienstag (21.04.2026) erneutes Zusammentreffen mit der Gruppe mit Clemens, zuerst Informatikraum gehen, danach Wirtschaftskurs
+	⁃	Mein Teil: Suchabschnitt
+
