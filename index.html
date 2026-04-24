@@ -22,8 +22,8 @@
     </div>
 
     <div class="actions">
-        <button class="login">Anmelden</button>
-        <button class="register">Registrieren</button>
+        <button class="login" onclick="openLogin()">Anmelden</button>
+        <button class="register" onclick="openRegister()">Registrieren</button>
     </div>
 </header>
 
@@ -55,12 +55,21 @@
             </div>
 
         </div>
+
+        <button class="arrow left" onclick="prevSlide()">❮</button>
+        <button class="arrow right" onclick="nextSlide()">❯</button>
         
         <div class="hero-content">  
             <div class ="auswahl">
                 <a href="suche.html" class="btn">Tutor finden</a>
                 <a href="registrieren.html" class="btn secondary">Tutor werden</a>
             </div>
+        </div>
+
+        <div class="slider-dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
         </div>
 
     </section>
@@ -85,12 +94,22 @@
     <section id="technik" class="tutor-section">
         <h2>💻 Technik</h2>
         <div class="card-row">
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('fridolin')">
                 <img src="images/tutor1.jpg" alt="Tutor 1">
                 <h3>Fridolin Wumpe</h3>
                 <p class="category-tag">Webentwicklung</p>
                 <p class="rating">⭐ 4.5 (95 Bewertungen)</p>
-                <p>💬 Online-Kurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Online-Kurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -98,20 +117,40 @@
     <section id="kreativ" class="tutor-section">
         <h2>🎨 Kreativ</h2>
         <div class="card-row">
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('luna')">
                 <img src="images/tutor2.jpg" alt="Tutor 2">
                 <h3>Luna Attamann</h3>
                 <p class="category-tag">Social Media Marketing</p>
                 <p class="rating">⭐ 4.8 (120 Bewertungen)</p>
-                <p>💬 Online-Kurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Online-Kurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
 
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('leyla')">
                 <img src="images/tutor6.jpg" alt="Tutor 6">
                 <h3>Leyla Mayer</h3>
                 <p class="category-tag">Painting & Zeichnen</p>
                 <p class="rating">⭐ 4.8 (100 Bewertungen)</p>
-                <p>💬 Präsenzkurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Präsenzkurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -119,12 +158,22 @@
     <section id="sport" class="tutor-section">
         <h2>⚽ Sport</h2>
         <div class="card-row">
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('paul')">
                 <img src="images/tutor3.jpg" alt="Tutor 3">
-                <h3>Cait Mantis</h3>
+                <h3>Paul Weber</h3>
                 <p class="category-tag">Ernährung & Fitness</p>
                 <p class="rating">⭐ 4.9 (85 Bewertungen)</p>
-                <p>💬 Präsenzkurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Präsenzkurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -132,12 +181,22 @@
     <section id="sprachen" class="tutor-section">
         <h2>📚 Sprachen</h2>
         <div class="card-row">
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('anna')">
                 <img src="images/tutor4.jpg" alt="Tutor 4">
                 <h3>Anna Müller</h3>
                 <p class="category-tag">Deutsch & Grammatik</p>
                 <p class="rating">⭐ 4.7 (110 Bewertungen)</p>
-                <p>💬 Online-Kurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Online-Kurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -145,12 +204,22 @@
     <section id="wissenschaft" class="tutor-section">
         <h2>🧠 Wissenschaft</h2>
         <div class="card-row">
-            <div class="card">
+            <div class="card" onclick="openTutorPopup('julian')">
                 <img src="images/tutor5.jpg" alt="Tutor 5">
                 <h3>Julian Sano</h3>
                 <p class="category-tag">Mathematik Nachhilfe</p>
                 <p class="rating">⭐ 4.6 (90 Bewertungen)</p>
-                <p>💬 Online-Kurse</p>
+                <div class="stars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <p class="kursart">💬 Online-Kurse</p>
+                <div class="favorite">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
             </div>
         </div>
     </section>
@@ -168,5 +237,47 @@
     <p>PZ Gräulinger Str. 15, 40625 Düsseldorf</p>
 </footer>
 
+<div class="popup" id="tutorPopup">
+    <div class="popup-content">
+        <span class="close" onclick="closeTutorPopup()">&times;</span>
+        
+        <h2 id="popup-name">Tutor Name</h2>
+        <p id="popup-category">Kategorie</p>
+        <p id="popup-rating">Bewertung</p>
+        <p id="kursart">Kursart</p>
+        <p id="popup-description">Beschreibung des Tutors</p>
+
+        <button class="btn">Jetzt buchen</button>
+    </div>
+</div>
+
+<div class="popup" id="loginPopup">
+    <div class="popup-content">
+        <span class="close" onclick="closeLogin()">&times;</span>
+        <h2>Anmelden</h2>
+        <input type="text" placeholder="E-Mail">
+        <input type="password" placeholder="Passwort">
+        <button class="btn">Login</button>
+        <p>Noch kein Konto?</p>
+        <button class="switch-btn" onclick="switchToRegister()">Registrieren</button>
+    </div>
+</div>
+
+<div class="popup" id="registerPopup">
+    <div class="popup-content">
+        <span class="close" onclick="closeRegister()">&times;</span>
+        <h2>Registrieren</h2>
+        <input type="text" placeholder="Name">
+        <input type="text" placeholder="E-Mail">
+        <input type="password" placeholder="Passwort">
+        <button class="btn">Registrieren</button>
+        <p>Schon ein Konto?</p>
+        <button class="switch-btn" onclick="switchToLogin()">Anmelden</button>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
+
 </body>
+
 </html>

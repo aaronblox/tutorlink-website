@@ -39,6 +39,7 @@ body {
 
     font-family: 'Playfair Display', serif;
     font-size: 24px;
+    font-weight: bold;
     color: #d4af37;
 }
 
@@ -157,6 +158,7 @@ button {
     border-radius: 8px;
     transition: all 0.3s ease;
     animation: pulse 2s infinite;
+    font-family: 'Poppins', sans-serif;
 }
 
 @keyframes pulse {
@@ -197,8 +199,7 @@ button {
 
 .slides {
     display: flex;
-    width: 100%;
-    animation: slide 12s infinite;
+    transition: transform 0.8s ease-in-out;
 }
 
 .slide {
@@ -216,32 +217,83 @@ button {
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 12px;
+    overflow: hidden;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-}
-
-@keyframes slide {
-    0% { transform: translateX(0); }
-    30% { transform: translateX(0); }
-
-    33% { transform: translateX(-100%); }
-    63% { transform: translateX(-100%); }
-
-    66% { transform: translateX(-200%); }
-    96% { transform: translateX(-200%); }
-    
-    100% { transform: translateX(0); }
 }
 
 .slide:nth-child(1) {
     background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero1.jpg');
 }
 
+.slide:nth-child(1) h1 {
+    color: #d4af37;
+}
+
 .slide:nth-child(2) {
     background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero2.jpg');
+    text-align: left;
+    align-items: flex-start;
+    padding-left: 80px;
 }
 
 .slide:nth-child(3) {
     background: linear-gradient(rgba(9,26,13,0.85), rgba(9,26,13,0.95)), url('../images/hero3.jpg');
+}
+
+.slide:nth-child(3) h1 {
+    font-size: 60px;
+    letter-spacing: 2px;
+}
+
+.slider-dots {  
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: #d4af37;
+    transform: scale(1.2);
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 30px;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.arrow:hover {
+    background-color: #d4af37;
+    color: black;
+}
+
+.arrow.left {
+    left: 20px;
+}
+
+.arrow.right {
+    right: 20px;
 }
 
 .hero-content {
@@ -249,6 +301,13 @@ button {
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
+    
+    animation: fadeInUp 1s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate(-50%, -30px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 .hero-slider h1 {
@@ -320,6 +379,9 @@ button {
     background-color: rgba(25, 68, 34, 0.4);
     border-radius: 12px;
     backdrop-filter: blur(6px);
+    opacity: 0;
+    transform: translateY(50px);
+    transition: 0.6s;
 }
 
 .tutor-section h2 {
@@ -339,6 +401,7 @@ button {
     background: linear-gradient(180deg, #194422, #123319);
     border-radius: 12px;
     overflow: hidden;
+    position: relative;
     
     transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -378,6 +441,45 @@ button {
 .rating {
     color: #d4af37;
     font-weight: bold;
+}
+
+.stars {
+    margin: 10px;
+}
+
+.stars i {
+    color: #444;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.stars i.active {
+    color: #d4af37;
+}
+
+.stars i:hover {
+    transform: scale(1.2);
+}
+
+.favorite {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.favorite i {
+    color: white;
+    transition: 0.3s;
+}
+
+.favorite i.active {
+    color: red;
+}
+
+.favorite i:hover {
+    transform: scale(1.2);
 }
 
 .category-tag {
@@ -431,6 +533,139 @@ footer a {
 
 .fa-x-twitter:hover {
     color: #1da1f2;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-content {
+    background: linear-gradient(180deg, #194422, #123319);
+    padding: 30px;
+    border-radius: 16px;
+    width: 380px;
+    
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    
+    text-align: center;
+    color: white;
+
+    font-family: 'Poppins', sans-serif;
+
+    animation: popupFade 0.4s ease;
+    position: relative;
+}
+
+.popup-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    margin-bottom: 20px;
+
+    background: linear-gradient(90deg, #d4af37, #f1d76a);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.popup-content p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.popup-content input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+
+    font-size: 14px;
+    outline: none;
+
+    transition: 0.3s;
+}
+
+.popup-content input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.popup-content input:focus {
+    border: 1px solid #d4af37;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+.popup-content .btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    border-radius: 8px;
+}
+
+.popup-content.large {
+    width: 450px;
+    text-align: left;
+}
+
+.popup-content.large h2 {
+    text-align: center;
+}
+
+.switch-btn {
+    background-color: transparent;
+    border: none;
+    color: #d4af37;
+
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 14px;
+
+    transition: 0.3s;
+}
+
+.switch-btn:hover {
+    color: #f1d76a;
+    text-decoration: underline;
+}
+
+@keyframes popupFade {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+
+    font-size: 22px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.close:hover {
+    color: #d4af37;
 }
 
 h1, h2, h3 {
