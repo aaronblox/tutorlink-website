@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
     <title>Tutorlink</title>
     <link rel="stylesheet" href="css/style.css">
@@ -17,8 +18,9 @@
     </div>
     
     <div class="search-bar">
-        <input type="text" placeholder="Suche nach Tutoren oder Fähigkeiten...">
-        <button>Suche</button>
+        <i class ="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Suche nach Tutoren oder Fähigkeiten...">
+        <button onclick="searchTutors()">Suche</button>
     </div>
 
     <div class="actions">
@@ -244,7 +246,7 @@
         <h2 id="popup-name">Tutor Name</h2>
         <p id="popup-category">Kategorie</p>
         <p id="popup-rating">Bewertung</p>
-        <p id="kursart">Kursart</p>
+        <p id="popup-kursart">Kursart</p>
         <p id="popup-description">Beschreibung des Tutors</p>
 
         <button class="btn">Jetzt buchen</button>
@@ -275,6 +277,8 @@
         <button class="switch-btn" onclick="switchToLogin()">Anmelden</button>
     </div>
 </div>
+
+<div class="cursor-glow"></div>
 
 <script src="js/script.js"></script>
 

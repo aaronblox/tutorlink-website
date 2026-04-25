@@ -1,15 +1,14 @@
+// Globale Variablen für Slider
 let currentslide = 0;
-
-const slides = document.querySelector(".slides");
-const dots = document.querySelectorAll(".dot");
-const totalSlides = document.querySelectorAll(".slide").length;
-
+let slides;
+let dots;
+let totalSlides;
 let interval;
 
 // Slider aktualisieren
 function updateSlider() {
     slides.style.transform = `translateX(-${currentslide * 100}%)`;
-    
+
     // Dots updaten
     dots.forEach(dot => dot.classList.remove("active"));
     dots[currentslide].classList.add("active");
@@ -53,67 +52,7 @@ function stopSlider() {
     clearInterval(interval);
 }
 
-// Hover Events für Slider
-const slider = document.querySelector(".hero-slider");
-
-slider.addEventListener("mouseenter", stopSlider);
-slider.addEventListener("mouseleave", startSlider);
-
-// Start
-updateSlider();
-startSlider();
-
-// Scroll Animation
-const sections = document.querySelectorAll(".tutor-section");
-
-window.addEventListener("scroll", () => {
-    sections.forEach(sec => {
-        const pos = sec.getBoundingClientRect().top;
-        if (pos < window.innerHeight - 100) {
-            sec.style.opacity = 1;
-            sec.style.transform = "translateY(0)";
-        }
-    });
-});
-
-// Bewertungssystem
-document.querySelectorAll(".stars").forEach(starContainer => {
-    const stars = starContainer.querySelectorAll("i");
-
-    stars.forEach(star => {
-        star.addEventListener("click", (event) => {
-            event.stopPropagation(); // Verhindert, dass der Klick auf die Karte ausgelöst wird
-
-            const value = star.getAttribute("data-value");
-            
-            stars.forEach(s => {
-                s.classList.remove("active");
-                if (s.getAttribute("data-value") <= value) {
-                    s.classList.add("active");
-                }
-            });
-        });
-    });
-});
-
-// Favoritenfunktion
-document.querySelectorAll(".favorite i").forEach(icon => {
-    icon.addEventListener("click", (event) => {
-        event.stopPropagation();
-
-        icon.classList.toggle("active");
-
-        if (icon.classList.contains("active")) {
-            icon.classList.remove("fa-regular");
-            icon.classList.add("fa-solid");
-        } else {
-            icon.classList.remove("fa-solid");
-            icon.classList.add("fa-regular");
-        }
-    });
-});
-
-// Tutor Öffnen
+// Tutor Popup Funktionen
 const tutorData = {
     fridolin: {
         name: "Fridolin Wumpe",
@@ -161,11 +100,11 @@ const tutorData = {
 
 function openTutorPopup(id) {
     const tutor = tutorData[id];
-    
+
     document.getElementById("popup-name").innerText = tutor.name;
     document.getElementById("popup-category").innerText = tutor.category;
     document.getElementById("popup-rating").innerText = tutor.rating;
-    document.getElementById("kursart").innerText = tutor.kursart;
+    document.getElementById("popup-kursart").innerText = tutor.kursart;
     document.getElementById("popup-description").innerText = tutor.description;
 
     document.getElementById("tutorPopup").style.display = "flex";
@@ -202,34 +141,209 @@ function switchToLogin() {
     openLogin();
 }
 
-window.addEventListener("click", (e) => {
-    document.querySelectorAll(".popup").forEach(popup => {
-        if (e.target === popup) {
-            popup.style.display = "none";
+function searchTutors() {
+    const cards = document.querySelectorAll(".card");
+    let firstVisible = null;
+    
+    // Finde die erste Karte, die nicht versteckt ist
+    for (let card of cards) {
+        if (card.style.display !== "none") {
+            firstVisible = card;
+            break;
         }
-    });
-});
+    }
+    
+    if (firstVisible) {
+        firstVisible.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}
 
-// Search Button Alert
-document.querySelector(".search-bar button").addEventListener("click", () => {
-    alert("Suchfunktion ist derzeit nicht verfügbar.");
-});
+document.addEventListener("DOMContentLoaded", () => {
+    // Header-Höhe berechnen und CSS-Variable setzen
+    function updateHeaderHeight() {
+        const header = document.querySelector(".header");
+        const headerHeight = header.offsetHeight + "px";
+        document.documentElement.style.setProperty("--header-height", headerHeight);
+    }
 
-// Scroll zu Cards statt zu Titel
-document.querySelectorAll(".category").forEach(category => {
-    category.addEventListener("click", (e) => {
-        e.preventDefault();
-        
-        // ID aus href auslesen
-        const href = category.getAttribute("href");
-        const section = document.querySelector(href);
-        
-        if (section) {
-            // Zur .card-row innerhalb der Sektion scrollen
-            const cardRow = section.querySelector(".card-row");
-            if (cardRow) {
-                cardRow.scrollIntoView({ behavior: "smooth", block: "center" });
+    // Initial setzen
+    updateHeaderHeight();
+
+    // Bei Fenster-Resize aktualisieren
+    window.addEventListener("resize", updateHeaderHeight);
+
+    // Initialisiere Slider-Variablen
+    slides = document.querySelector(".slides");
+    dots = document.querySelectorAll(".dot");
+    totalSlides = document.querySelectorAll(".slide").length;
+
+    // Hover Events für Slider
+    const slider = document.querySelector(".hero-slider");
+
+        slider.addEventListener("mouseenter", stopSlider);
+        slider.addEventListener("mouseleave", startSlider);
+
+    // Start
+    updateSlider();
+    startSlider();
+
+    // Scroll Animation
+    const sections = document.querySelectorAll(".tutor-section");
+
+    const elements = document.querySelectorAll(".card, .category, .tutor-section");
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
             }
+        });
+    });
+
+    elements.forEach(e1 => observer.observe(e1));
+
+    // Bewertungssystem
+    document.querySelectorAll(".stars").forEach((starContainer, index) => {
+        const stars = starContainer.querySelectorAll("i");
+
+        // gespeicherte Bewertung laden
+        const savedRating = localStorage.getItem("rating_" + index);
+
+        if (savedRating) {
+            stars.forEach(s => {
+                if (s.getAttribute("data-value") <= savedRating) {
+                    s.classList.add("active");
+                }
+            });
         }
+
+        stars.forEach(star => {
+            star.addEventListener("click", (event) => {
+                event.stopPropagation(); // Verhindert, dass der Klick auf die Karte ausgelöst wird
+
+                const value = star.getAttribute("data-value");
+            
+                // speichern
+                localStorage.setItem("rating_" + index, value);
+            
+                stars.forEach(s => {
+                    s.classList.remove("active");
+                    if (s.getAttribute("data-value") <= value) {
+                        s.classList.add("active");
+                    }
+                });
+            });
+        });
+    });
+
+    // Favoritenfunktion
+    document.querySelectorAll(".favorite i").forEach((icon, index) => {
+    
+        // Beim Laden prüfen
+        if (localStorage.getItem("fav_" + index) === "true") {
+            icon.classList.add("active", "fa-solid");
+            icon.classList.remove("fa-regular");
+        }
+
+        icon.addEventListener("click", (event) => {
+            event.stopPropagation(); 
+
+            icon.classList.toggle("active");
+            if (icon.classList.contains("active")) {
+                icon.classList.remove("fa-regular");
+                icon.classList.add("fa-solid");
+                localStorage.setItem("fav_" + index, "true");
+            } else {
+                icon.classList.remove("fa-solid");
+                icon.classList.add("fa-regular");
+                localStorage.setItem("fav_" + index, "false");
+            }
+        });
+    });
+
+    // Popup-Overlay schließen
+    window.addEventListener("click", (e) => {
+        document.querySelectorAll(".popup").forEach(popup => {
+            if (e.target === popup) {
+                popup.style.display = "none";
+            }
+        });
+    });
+
+
+
+    // Scroll zu Cards statt zu Titel
+    document.querySelectorAll(".category").forEach(category => {
+        category.addEventListener("click", (e) => {
+            e.preventDefault();
+        
+            // ID aus href auslesen
+            const href = category.getAttribute("href");
+            const section = document.querySelector(href);
+        
+            if (section) {
+                // Zur .card-row innerhalb der Sektion scrollen
+                const cardRow = section.querySelector(".card-row");
+                if (cardRow) {
+                    cardRow.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            }
+        });
+    });
+
+    // Cursor-Glow-Effekt
+    let mouseX = 0;
+    let mouseY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const glow = document.querySelector(".cursor-glow");
+
+    document.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateGlow() {
+        currentX += (mouseX - currentX) * 0.1;
+        currentY += (mouseY - currentY) * 0.1;
+
+        glow.style.left = currentX + "px";
+        glow.style.top = currentY + "px";
+
+        requestAnimationFrame(animateGlow);
+    }
+
+    animateGlow();
+
+    document.querySelectorAll(".card, .btn").forEach(e1 => {
+        e1.addEventListener("mouseenter", () => {
+            glow.style.transform = "translate(-50%, -50%) scale(1.5)";
+        });
+
+        e1.addEventListener("mouseleave", () => {
+            glow.style.transform = "translate(-50%, -50%) scale(1)";
+        });
+    });
+
+    const searchInput = document.getElementById("searchInput");
+    const cards = document.querySelectorAll(".card");
+
+    searchInput.addEventListener("input", () => {
+        const value = searchInput.value.toLowerCase();
+
+        cards.forEach(card => {
+            const name = card.querySelector("h3").innerText.toLowerCase();
+            const category = card.querySelector(".category-tag").innerText.toLowerCase();
+
+            if (name.includes(value) || category.includes(value)) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
     });
 });

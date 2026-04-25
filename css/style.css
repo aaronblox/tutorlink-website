@@ -7,8 +7,10 @@ html {
 }
 
 .header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     background-color: #194422;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -16,15 +18,46 @@ html {
     align-items: center;
     justify-content: space-between;
     padding: 15px 30px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
+    padding-top: calc(var(--header-height) + 50px);
     color: white;
 
     background: radial-gradient(circle at top, #0f2a17, #091a0d 70%);
     animation: fadeIn 1s ease-in;
+    cursor: default;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+    top: -200px;
+    left: -200px;
+    z-index: -1;
+    filter: blur(80px);
+}
+
+.cursor-glow {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+
+    pointer-events: none;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+
+    transition: transform 0.05s linear;
 }
 
 @keyframes fadeIn {
@@ -48,28 +81,66 @@ body {
 }
 
 .search-bar {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    min-width: 250px;
+    max-width: 500px;
+
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 5px;
+
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    transition: 0.3s;
+}
+
+.search-bar:focus-within {
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.search-bar i {
+    margin: 0 10px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .search-bar input {
-    padding: 10px;
-    width: 350px;
-
+    flex: 1;
+    background: transparent;
     border: none;
-    border-radius: 5px 0 0 5px;
     outline: none;
-    font-family: 'Poppins', sans-serif;
+    color: white;
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .search-bar button {
-    padding: 10px 20px;
-    background-color: #123319;
-    color: white;
+    background: linear-gradient(135deg, #d4af37, #f1d76a);
+    color: black;
     border: none;
-    border-radius: 0 5px 5px 0;
+    padding: 10px 15px;
+    border-radius: 8px;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
     font-family: 'Poppins', sans-serif;
+}
+
+.search-bar button:hover {
+    transform: scale(1.05);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .actions button {
@@ -98,12 +169,15 @@ button:hover, .btn:hover {
 }
 
 nav {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    z-index: 999;
     background-color: rgba(212, 175, 55, 0.9);
     backdrop-filter: blur(6px);
     padding: 10px;
-    position: sticky;
-    top: 70px;
-    z-index: 999;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 nav a {
@@ -159,6 +233,23 @@ button {
     transition: all 0.3s ease;
     animation: pulse 2s infinite;
     font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    left: 0;
+    top: 0;
+    transition: 0.3s;
+}
+
+.btn:hover::after {
+    width: 100%;
 }
 
 @keyframes pulse {
@@ -376,7 +467,9 @@ button {
 .tutor-section {
     margin-top: 40px;
     padding: 20px;
-    background-color: rgba(25, 68, 34, 0.4);
+    background: rgba(25, 68, 34, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     backdrop-filter: blur(6px);
     opacity: 0;
@@ -406,6 +499,17 @@ button {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: linear-gradient(120deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+    opacity: 0;
+    transition: 0.3s;
+    pointer-events: none;
+}
+
 .card img {
     width: 100%;
     height: 160px;
@@ -424,7 +528,11 @@ button {
 
 .card:hover {
     transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 .card-row {
@@ -552,7 +660,9 @@ footer a {
 }
 
 .popup-content {
-    background: linear-gradient(180deg, #194422, #123319);
+    background: rgba(20, 50, 30, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
     padding: 30px;
     border-radius: 16px;
     width: 380px;
@@ -648,8 +758,8 @@ footer a {
 }
 
 @keyframes popupFade {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: scale(0.7) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .close {
@@ -668,6 +778,76 @@ footer a {
     color: #d4af37;
 }
 
+.card, .category, .tutor-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 h1, h2, h3 {
     font-family: 'Playfair Display', serif;
+}
+
+@media (max-width: 768px) {
+
+    .cursor-glow {
+        display: none;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .hero-slider {
+        height: 300px;
+    }
+
+    .slide {
+        height: 300px;
+        padding: 40px 20px;
+    }
+
+    .hero-slider h1 {
+        font-size: 28px;
+    }
+
+    .hero-slider p {
+        font-size: 16px;
+    }
+
+    .category-list {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .card-row {
+        overflow-x: scroll;
+    }
+
+    .card {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    
+    .hero-slider h1 {
+        font-size: 22px;
+    }
+
+    .hero-slider p {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
 }
