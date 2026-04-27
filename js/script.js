@@ -302,6 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const glow = document.querySelector(".cursor-glow");
 
+    if (window.matchMedia("(hover: none)").matches) return;
+
     document.addEventListener("mousemove", (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -335,15 +337,71 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener("input", () => {
         const value = searchInput.value.toLowerCase();
 
-        cards.forEach(card => {
-            const name = card.querySelector("h3").innerText.toLowerCase();
-            const category = card.querySelector(".category-tag").innerText.toLowerCase();
+        document.querySelectorAll(".tutor-section").forEach(section => {
+            const cards = section.querySelectorAll(".card");
+            let visibleCards = 0;
 
-            if (name.includes(value) || category.includes(value)) {
-                card.style.display = "";
-            } else {
-                card.style.display = "none";
-            }
+            cards.forEach(card => {
+                card.dataset.search =
+                    card.querySelector("h3").innerText.toLowerCase() + "" + 
+                    card.querySelector(".category-tag").innerText.toLowerCase();
+
+                if (card.dataset.search.includes(value)) {
+                    card.style.display = "";
+                    visibleCards++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            section.style.display = visibleCards > 0 ? "block" : "none";
         });
     });
+
+    // Bilder laden nach JS
+    window.addEventListener("load", updateHeaderHeight);
+
+    // Mobile Nav
+    function toggleMenu() {
+        const nav = document.getElementById("mobileNav");
+
+        nav.classList.toggle("open");
+        document.body.classList.toggle("menu-open");
+    }
 });
+
+// Premium Erweiterung
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMobilePremium();
+    initCardEntrance();
+});
+
+function initMobilePremium() {
+    const burger = document.querySelector(".burger");
+    const closeBtn = document.querySelector(".close-nav");
+    const nav = document.getElementById("mobileNav");
+
+    if (!burger || !nav) return;
+
+    burger.addEventListener("click", () => {
+        nav.classList.toggle("open");
+        document.body.classList.toggle("menu-open");
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            nav.classList.remove("open");
+            document.body.classList.remove("menu-open");
+        });
+    }
+}
+
+function initCardEntrance() {
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach((card, i) => {
+        card.style.transitionDelay = `$ {i * 80}ms`;
+    });
+}

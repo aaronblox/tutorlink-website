@@ -11,7 +11,20 @@
 </head>
 <body>
 
+    <div class="bottom-nav">
+        <a href="#">🏠</a>
+        <a href="#">🔍</a>
+        <a href="#">📚</a>
+        <a href="#">👤</a>
+    </div>
+
 <header class="header">
+    <div class="mobile-top">
+        <button class="burger" onclick="toggleMenu()">
+            ☰
+        </button>
+    </div>
+    
     <div class="logo">
         <img src="images/tutorlink_logo_transparent.png" alt="Tutorlink Logo">
         <span>Tutorlink</span>
@@ -29,7 +42,8 @@
     </div>
 </header>
 
-<nav>
+<nav id ="mobileNav">
+    <button class="close-nav" onclick="toggleMenu()">✕</button>
     <a href="#">Start</a>
     <a href="#">Über uns</a>
     <a href="#">Kontakt</a>
