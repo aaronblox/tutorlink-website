@@ -55,6 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initAnimations();
     initMobileNav();
     initCursorGlow();
+    updateUI();
+    loadFavoritesUI();
+    updateRatingStarsState();
 });
 
 function qs(el) { return document.querySelector(el); }
@@ -87,12 +90,12 @@ function updateSlider() {
     const dots = qsa(".dot");
     const total = qsa(".slide").length;
 
+    currentSlide = currentSlide % total;
+
     slides.style.transform = `translateX(-${currentSlide * 100}%)`;
 
     dots.forEach(dot => dot.classList.remove("active"));
     if (dots[currentSlide]) dots[currentSlide].classList.add("active");
-
-    currentSlide = currentSlide % total;
 }
 
 function startSlider() {
@@ -136,17 +139,19 @@ function openTutorPopup(id) {
     qs("#popup-description").innerText = tutor.description;
 
     qs("#tutorPopup").style.display = "flex";
+    lockBody();
 }
 
 function closeTutorPopup() {
     qs("#tutorPopup").style.display = "none";
+    unlockBody();
 }
 
-function openLogin() { qs("#loginPopup").style.display = "flex"; }
-function closeLogin() { qs("#loginPopup").style.display = "none"; }
+function openLogin() { qs("#loginPopup").style.display = "flex"; lockBody(); }
+function closeLogin() { qs("#loginPopup").style.display = "none"; unlockBody(); }
 
-function openRegister() { qs("#registerPopup").style.display = "flex"; }
-function closeRegister() { qs("#registerPopup").style.display = "none"; }
+function openRegister() { qs("#registerPopup").style.display = "flex"; lockBody(); }
+function closeRegister() { qs("#registerPopup").style.display = "none"; unlockBody(); }
 
 function switchToRegister() {
     closeLogin();
@@ -234,9 +239,10 @@ function initSearch() {
         });
 
         document.querySelectorAll(".tutor-section").forEach(section => {
-            const hasVisibleCards = section.querySelectorAll(".card[style='']").length > 0 ||
-                section.querySelectorAll(".card:not([style*='display: none'])").length > 0;
-            section.style.display = hasVisibleCards ? "block" : "none";
+            const visible = [...section.querySelectorAll(".card")]
+                .some(card => getComputedStyle(card).display !== "none");
+
+            section.style.display = visible ? "block" : "none";
         });
 
         renderSuggestions(searchResults.slice(0, 6));
@@ -274,28 +280,50 @@ function searchTutors() {
 }
 
 function initRatings() {
-    qsa(".stars").forEach((box, index) => {
+    qsa(".stars").forEach(box => {
         const stars = box.querySelectorAll("i");
-        const saved = localStorage.getItem("rating_" + index);
+        const card = box.closest(".card") || box.closest(".tutor-card");
+        const tutorName = card ? 
+            (card.querySelector("h3")?.innerText || 
+             card.querySelector(".name")?.innerText || 
+             card.querySelector("h2")?.innerText) : "Unbekannt";
 
-        if (saved) {
+        // Bewertung beim Laden anzeigen
+        if (currentUser && currentUser.ratings && currentUser.ratings[tutorName]) {
+            const savedValue = currentUser.ratings[tutorName];
             stars.forEach(star => {
-                if (star.dataset.value <= saved) {
-                    star.classList.add("active");
-                }
+                star.classList.toggle("active", parseInt(star.dataset.value) <= savedValue);
             });
         }
 
+        // Klick-Handler
         stars.forEach(star => {
             star.addEventListener("click", (e) => {
                 e.stopPropagation();
 
-                const value = star.dataset.value;
-                localStorage.setItem("rating_" + index, value);
+                if (!currentUser) {
+                    requireLogin();
+                    return;
+                }
 
-                stars.forEach(s => {
-                    s.classList.toggle("active", s.dataset.value <= value);
-                });
+                const clickedValue = parseInt(star.dataset.value);
+                const currentRating = currentUser.ratings ? currentUser.ratings[tutorName] : null;
+
+                if (currentRating === clickedValue) {
+                    // Gleichen Stern nochmal klicken → Bewertung entfernen
+                    delete currentUser.ratings[tutorName];
+                    stars.forEach(s => s.classList.remove("active"));
+                } else {
+                    // Neue Bewertung setzen
+                    if (!currentUser.ratings) currentUser.ratings = {};
+                    currentUser.ratings[tutorName] = clickedValue;
+
+                    stars.forEach(s => {
+                        s.classList.toggle("active", parseInt(s.dataset.value) <= clickedValue);
+                    });
+                }
+
+                saveUser();
             });
         });
     });
@@ -338,13 +366,25 @@ function initAnimations() {
     qsa(".card,.category,.tutor-section").forEach(el => {
         observer.observe(el);
     });
+
+    document.querySelectorAll(".trust-item,.step-box,.review-card,.final-cta")
+        .forEach(el => observer.observe(el));
 }
 
 function initMobileNav() {
+    const nav = qs("#mobileNav");
+
     window.toggleMenu = function () {
-        qs("#mobileNav").classList.toggle("open");
+        nav.classList.toggle("open");
         document.body.classList.toggle("menu-open");
     };
+
+    nav.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            nav.classList.remove("open");
+            document.body.classList.remove("menu-open");
+        });
+    });
 }
 
 function initCursorGlow() {
@@ -377,6 +417,7 @@ const slider = document.querySelector(".hero-slider");
 if (slider) {
     slider.addEventListener("touchstart", e => {
         startX = e.touches[0].clientX;
+        endX = startX;
     });
 
     slider.addEventListener("touchmove", e => {
@@ -395,3 +436,312 @@ if (slider) {
         }
     });
 }
+
+function lockBody() {
+    document.body.style.overflow = "hidden";
+}
+
+function unlockBody() {
+    document.body.style.overflow = "";
+}
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+
+function registerUser() {
+    const name = qs("#regName").value.trim();
+    const email = qs("#regEmail").value.trim().toLowerCase();
+    const pass = qs("#regPass").value.trim();
+
+    if (!name || !email || !pass) {
+        alert("Bitte alle Felder ausfüllen.");
+        return;
+    }
+
+    if (users.find(u => u.email === email)) {
+        alert("Diese E-Mail existiert bereits.");
+        return;
+    }
+
+    const user = {
+        id: Date.now(),
+        name,
+        email,
+        pass,
+        favorites: [],
+        ratings: {},
+        bookings: [],
+        messages: []
+    };
+
+    users.push(user);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Registrierung erfolgreich.");
+    closeRegister();
+    openLogin();
+}
+
+function loginUser() {
+    const email = qs("#loginEmail").value.trim().toLowerCase();
+    const pass = qs("#loginPass").value.trim();
+
+    const found = users.find(u => u.email === email && u.pass === pass);
+
+    if (!found) {
+        alert("Login fehlgeschlagen.");
+        return;
+    }
+
+    currentUser = found;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    updateUI();
+    updateRatingStarsState();
+    loadFavoritesUI();
+
+    closeLogin();
+    alert("Willkommen " + currentUser.name);
+}
+
+function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem("currentUser");
+
+    updateUI();
+    updateRatingStarsState();
+    closeDashboard();
+    loadFavoritesUI();
+
+    alert("Erfolgreich ausgeloggt.");
+}
+
+function updateUI() {
+    const area = qs("#authArea");
+
+    if (!area) return;
+
+    if (!currentUser) {
+        area.innerHTML = `
+            <button class="login" onclick="openLogin()">Anmelden</button>
+            <button class="register" onclick="openRegister()">Registrieren</button>
+        `;
+    } else {
+        area.innerHTML = `
+            <button class="login" onclick="openDashboard()">Dashboard</button>
+            <button class="register" onclick="logoutUser()">Logout</button>
+        `;
+    }
+    updateRatingStarsState();
+}
+
+function requireLogin() {
+    alert("Bitte zuerst anmelden oder registrieren.");
+    openLogin();
+}
+
+function initFavorites() {
+    qsa(".favorite i").forEach(icon => {
+
+        const card = icon.closest(".card");
+        const name = card.querySelector("h3").innerText;
+
+        icon.addEventListener("click", e => {
+            e.stopPropagation();
+
+            if (!currentUser) {
+                requireLogin();
+                return;
+            }
+
+            let favs = currentUser.favorites;
+
+            if (favs.includes(name)) {
+                favs = favs.filter(f => f !== name);
+            } else {
+                favs.push(name);
+            }
+
+            currentUser.favorites = favs;
+            saveUser();
+
+            loadFavoritesUI();
+        });
+    });
+
+    loadFavoritesUI();
+}
+
+function updateRatingStarsState() {
+    qsa(".stars").forEach(box => {
+        const stars = box.querySelectorAll("i");
+        const card = box.closest(".card") || box.closest(".tutor-card");
+        const tutorName = card ? 
+            (card.querySelector("h3")?.innerText || 
+             card.querySelector(".name")?.innerText || 
+             card.querySelector("h2")?.innerText) : null;
+
+        if (!currentUser) {
+            stars.forEach(star => {
+                star.classList.remove("active");
+                star.style.opacity = "0.4";
+                star.style.cursor = "not-allowed";
+                star.style.pointerEvents = "none";
+            });
+        } else {
+            const savedValue = tutorName && currentUser.ratings ? currentUser.ratings[tutorName] : null;
+
+            stars.forEach(star => {
+                star.style.opacity = "1";
+                star.style.cursor = "pointer";
+                star.style.pointerEvents = "auto";
+                star.classList.toggle("active", savedValue && parseInt(star.dataset.value) <= savedValue);
+            });
+        }
+    });
+}
+
+function getTutorNameFromCard(star) {
+    const card = star.closest(".card") || star.closest(".tutor-card");
+    if (!card) return null;
+    
+    return card.querySelector("h3")?.innerText || 
+           card.querySelector(".name")?.innerText || 
+           card.querySelector("h2")?.innerText;
+}
+
+function loadFavoritesUI() {
+    qsa(".favorite i").forEach(icon => {
+
+        const card = icon.closest(".card");
+        const name = card.querySelector("h3").innerText;
+
+        icon.classList.remove("fa-solid", "fa-regular", "active");
+
+        if (currentUser && currentUser.favorites.includes(name)) {
+            icon.classList.add("fa-solid", "active");
+        } else {
+            icon.classList.add("fa-regular");
+        }
+    });
+}
+
+function openDashboard() {
+
+    if (!currentUser) {
+        requireLogin();
+        return;
+    }
+
+    qs("#dashboardPopup").style.display = "flex";
+    lockBody();
+
+    qs("#dashName").innerText = currentUser.name;
+    qs("#dashMail").innerText = currentUser.email;
+
+    renderDashboard();
+}
+
+function closeDashboard() {
+    qs("#dashboardPopup").style.display = "none";
+    unlockBody();
+}
+
+function renderDashboard() {
+    const boxes = qsa(".dash-box");
+
+    // Favoriten
+    boxes[1].innerHTML = `
+        <h3>⭐ Favoriten</h3>
+        ${currentUser.favorites.length 
+            ? currentUser.favorites.map(f => `<p>${f}</p>`).join("") 
+            : "<p>Keine Favoriten gespeichert</p>"}
+    `;
+
+    // Meine Bewertungen
+    let ratingsHTML = `<h3>⭐ Meine Bewertungen</h3>`;
+    
+    if (currentUser.ratings && Object.keys(currentUser.ratings).length > 0) {
+        ratingsHTML += Object.entries(currentUser.ratings)
+            .map(([name, value]) => `<p><strong>${name}</strong>: ${value} Sterne</p>`)
+            .join("");
+    } else {
+        ratingsHTML += "<p>Noch keine Bewertungen abgegeben</p>";
+    }
+
+    boxes[2].innerHTML = ratingsHTML;
+
+    // Buchungen (Box 3)
+    boxes[3].innerHTML = `
+        <h3>📚 Meine Buchungen</h3>
+        ${currentUser.bookings.length 
+            ? currentUser.bookings.map(b => `<p>${b}</p>`).join("") 
+            : "<p>Noch keine Buchungen vorhanden</p>"}
+    `;
+}
+
+function bookTutor(name) {
+
+    if (!currentUser) {
+        requireLogin();
+        return;
+    }
+
+    currentUser.bookings.push(
+        "Session bei " + name + " angefragt"
+    );
+
+    saveUser();
+
+    alert("Buchung gespeichert.");
+}
+
+function openTutorPopup(id) {
+
+    const tutor = tutorData[id];
+    if (!tutor) return;
+
+    qs("#popup-name").innerText = tutor.name;
+    qs("#popup-category").innerText = tutor.category;
+    qs("#popup-rating").innerText = tutor.rating;
+    qs("#popup-kursart").innerText = tutor.kursart;
+    qs("#popup-description").innerText = tutor.description;
+
+    qs("#tutorPopup .btn").onclick = () => {
+        bookTutor(tutor.name);
+    };
+
+    qs("#tutorPopup").style.display = "flex";
+    lockBody();
+}
+
+function saveUser() {
+
+    users = users.map(u =>
+        u.email === currentUser.email ? currentUser : u
+    );
+
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+}
+
+document.querySelectorAll(".category-list a").forEach(link => {
+
+    link.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        const target = document.querySelector(this.getAttribute("href"));
+        const offset = document.querySelector(".header").offsetHeight + 70;
+
+        const top =
+            target.getBoundingClientRect().top +
+            window.pageYOffset -
+            offset;
+
+        window.scrollTo({
+            top,
+            behavior: "smooth"
+        });
+    });
+
+});
