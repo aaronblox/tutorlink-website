@@ -382,30 +382,36 @@
 <div class="cursor-glow"></div>
 
 <div class="popup" id="dashboardPopup">
-    <div class="popup-content large">
+    <div class="popup-content dashboard-pro">
+
         <span class="close" onclick="closeDashboard()">&times;</span>
 
         <h2>Mein Dashboard</h2>
 
-        <div class="dash-box">
-            <h3>👤 Mein Profil</h3>
-            <p id="dashName">Name</p>
-            <p id="dashMail">Mail</p>
+        <div class="dash-tabs">
+            <button class="tab active" data-tab="profile">Profil</button>
+            <button class="tab" data-tab="favorites">Favoriten</button>
+            <button class="tab" data-tab="ratings">Bewertungen</button>
+            <button class="tab" data-tab="bookings">Buchungen</button>
         </div>
 
-        <div class="dash-box">
-            <h3>⭐ Favoriten</h3>
-            <p>Gespeicherte Tutoren verfügbar</p>
-        </div>
+        <div class="dash-content">
 
-        <div class="dash-box">
-            <h3>📚 Meine Buchungen</h3>
-            <p>Noch keine Buchungen vorhanden</p>
-        </div>
+            <div class="tab-content active" id="tab-profile">
+                <div class="dash-card">
+                    <h3>👤 Profil</h3>
+                    <p id="dashName"></p>
+                    <p id="dashMail"></p>
+                    <button class="btn" onclick="logoutUser()">Logout</button>
+                </div>
+            </div>
 
-        <div class="dash-box">
-            <h3>⚙️ Konto</h3>
-            <button class="btn" onclick="logoutUser()">Logout</button>
+            <div class="tab-content" id="tab-favorites"></div>
+
+            <div class="tab-content" id="tab-ratings"></div>
+
+            <div class="tab-content" id="tab-bookings"></div>
+
         </div>
     </div>
 </div>

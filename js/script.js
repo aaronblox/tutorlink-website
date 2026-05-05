@@ -288,7 +288,6 @@ function initRatings() {
              card.querySelector(".name")?.innerText || 
              card.querySelector("h2")?.innerText) : "Unbekannt";
 
-        // Bewertung beim Laden anzeigen
         if (currentUser && currentUser.ratings && currentUser.ratings[tutorName]) {
             const savedValue = currentUser.ratings[tutorName];
             stars.forEach(star => {
@@ -296,7 +295,6 @@ function initRatings() {
             });
         }
 
-        // Klick-Handler
         stars.forEach(star => {
             star.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -310,11 +308,9 @@ function initRatings() {
                 const currentRating = currentUser.ratings ? currentUser.ratings[tutorName] : null;
 
                 if (currentRating === clickedValue) {
-                    // Gleichen Stern nochmal klicken → Bewertung entfernen
                     delete currentUser.ratings[tutorName];
                     stars.forEach(s => s.classList.remove("active"));
                 } else {
-                    // Neue Bewertung setzen
                     if (!currentUser.ratings) currentUser.ratings = {};
                     currentUser.ratings[tutorName] = clickedValue;
 
@@ -639,6 +635,7 @@ function openDashboard() {
     qs("#dashName").innerText = currentUser.name;
     qs("#dashMail").innerText = currentUser.email;
 
+    initDashboardTabs();
     renderDashboard();
 }
 
@@ -647,37 +644,108 @@ function closeDashboard() {
     unlockBody();
 }
 
+function initDashboardTabs() {
+    qsa(".tab").forEach(tab => {
+        tab.onclick = () => {
+
+            qsa(".tab").forEach(t => t.classList.remove("active"));
+            qsa(".tab-content").forEach(c => c.classList.remove("active"));
+
+            tab.classList.add("active");
+            qs("#tab-" + tab.dataset.tab).classList.add("active");
+        };
+    });
+}
+
 function renderDashboard() {
-    const boxes = qsa(".dash-box");
 
-    // Favoriten
-    boxes[1].innerHTML = `
-        <h3>⭐ Favoriten</h3>
-        ${currentUser.favorites.length 
-            ? currentUser.favorites.map(f => `<p>${f}</p>`).join("") 
-            : "<p>Keine Favoriten gespeichert</p>"}
-    `;
+    renderFavorites();
+    renderRatings();
+    renderBookings();
+}
 
-    // Meine Bewertungen
-    let ratingsHTML = `<h3>⭐ Meine Bewertungen</h3>`;
-    
-    if (currentUser.ratings && Object.keys(currentUser.ratings).length > 0) {
-        ratingsHTML += Object.entries(currentUser.ratings)
-            .map(([name, value]) => `<p><strong>${name}</strong>: ${value} Sterne</p>`)
-            .join("");
-    } else {
-        ratingsHTML += "<p>Noch keine Bewertungen abgegeben</p>";
+function renderFavorites() {
+
+    const container = qs("#tab-favorites");
+
+    if (!currentUser.favorites.length) {
+        container.innerHTML = "<p class='empty'>Keine Favoriten gespeichert</p>";
+        return;
     }
 
-    boxes[2].innerHTML = ratingsHTML;
+    const cards = [...document.querySelectorAll(".card")];
 
-    // Buchungen (Box 3)
-    boxes[3].innerHTML = `
-        <h3>📚 Meine Buchungen</h3>
-        ${currentUser.bookings.length 
-            ? currentUser.bookings.map(b => `<p>${b}</p>`).join("") 
-            : "<p>Noch keine Buchungen vorhanden</p>"}
-    `;
+    const html = currentUser.favorites.map(name => {
+
+        const card = cards.find(c =>
+            c.querySelector("h3").innerText === name
+        );
+
+        if (!card) return "";
+
+        const img = card.querySelector("img").src;
+        const category = card.querySelector(".category-tag").innerText;
+
+        return `
+            <div class="fav-card" onclick="scrollToTutor('${name}')">
+                <img src="${img}">
+                <div>
+                    <h4>${name}</h4>
+                    <p>${category}</p>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    container.innerHTML = html;
+}
+
+function renderRatings() {
+
+    const container = qs("#tab-ratings");
+
+    if (!currentUser.ratings || !Object.keys(currentUser.ratings).length) {
+        container.innerHTML = "<p class='empty'>Keine Bewertungen</p>";
+        return;
+    }
+
+    container.innerHTML = Object.entries(currentUser.ratings)
+        .map(([name, val]) => `
+            <div class="dash-line">
+                <span>${name}</span>
+                <strong>${val} ⭐</strong>
+            </div>
+        `).join("");
+}
+
+function renderBookings() {
+
+    const container = qs("#tab-bookings");
+
+    if (!currentUser.bookings.length) {
+        container.innerHTML = "<p class='empty'>Keine Buchungen</p>";
+        return;
+    }
+
+    container.innerHTML = currentUser.bookings
+        .map(b => `<div class="dash-line">${b}</div>`)
+        .join("");
+}
+
+function scrollToTutor(name) {
+
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+        if (card.querySelector("h3").innerText === name) {
+            card.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+    });
+
+    closeDashboard();
 }
 
 function bookTutor(name) {
