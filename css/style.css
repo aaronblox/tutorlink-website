@@ -1452,3 +1452,54 @@ h3 {
         font-size: 14px;
     }
 }
+
+.page-hero {
+    padding-top: calc(var(--header-height) + 60px);
+    padding-bottom: 40px;
+    text-align: center;
+}
+
+.page-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.page-hero p {
+    opacity: 0.8;
+    font-size: 1.1rem;
+}
+
+#mobileNav a {
+    position: relative;
+    overflow: hidden;
+}
+
+#mobileNav a.active-page {
+    color: #fff;
+
+    background: linear-gradient(135 deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+    transform: translateX(6px);
+}
+
+#mobileNav a.active-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% {
+        left: -120%;
+    }
+
+    100% {
+        left: 140%;
+    }
+}

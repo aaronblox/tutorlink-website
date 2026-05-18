@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
-    <title>Tutorlink</title>
+    <title>Tutorlink - Start</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -12,10 +12,11 @@
 <body>
 
     <div class="bottom-nav">
-        <a href="#"><i class="fa-solid fa-house"></i></a>
-        <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
-        <a href="#"><i class="fa-solid fa-book-open"></i></a>
-        <a href="#"><i class ="fa-solid fa-user"></i></a>
+        
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <a href="suche.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="meine-kurse.html"><i class="fa-solid fa-book-open"></i></a>
+        <a href="#" onclick="openDashboard()"><i class ="fa-solid fa-user"></i></a>
     </div>
 
 <header class="header">
@@ -45,10 +46,12 @@
 
 <nav id ="mobileNav">
     <button class="close-nav" onclick="toggleMenu()">✕</button>
-    <a href="#">Start</a>
-    <a href="#">Über uns</a>
-    <a href="#">Kontakt</a>
-    <a href="#" class="highlight">Meine Kurse</a>
+    
+    <a href="index.html">Start</a>
+    <a href="suche.html">Suche</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="meine-kurse.html">Meine Kurse</a>
 </nav>
 
 <main>
@@ -78,7 +81,10 @@
         
         <div class="hero-content">  
             <div class ="auswahl">
-                <a href="suche.html" class="btn">Tutor finden</a>
+                <a href="suche.html" class="btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Tutor finden
+                </a>
                 <a href="registrieren.html" class="btn secondary">Tutor werden</a>
             </div>
         </div>
