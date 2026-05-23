@@ -1,75 +1,11 @@
 "use strict";
 
 /* =========================================
-   GLOBAL STATE
+   GLOBAL STATE (UI)
 ========================================= */
 
 let currentSlide = 0;
 let slideInterval = null;
-
-let users = JSON.parse(localStorage.getItem("users")) || [];
-let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-
-/* =========================================
-   HELPERS
-========================================= */
-
-const qs = (el) => document.querySelector(el);
-const qsa = (el) => document.querySelectorAll(el);
-
-/* =========================================
-   TUTOR DATA
-========================================= */
-
-const tutorData = {
-    fridolin: {
-        name: "Fridolin Wumpe",
-        category: "Webentwicklung",
-        rating: "⭐ 4.5 (95 Bewertungen)",
-        kursart: "💬 Online-Kurse",
-        description: "Fridolin ist erfahrener Webentwickler mit über 10 Jahren Erfahrung."
-    },
-
-    luna: {
-        name: "Luna Attamann",
-        category: "Social Media Marketing",
-        rating: "⭐ 4.8 (120 Bewertungen)",
-        kursart: "💬 Online-Kurse",
-        description: "Luna ist Expertin für Social Media Marketing."
-    },
-
-    leyla: {
-        name: "Leyla Mayer",
-        category: "Painting & Zeichnen",
-        rating: "⭐ 4.8 (100 Bewertungen)",
-        kursart: "💬 Präsenzkurse",
-        description: "Leyla unterrichtet Malerei und Zeichnen."
-    },
-
-    paul: {
-        name: "Paul Weber",
-        category: "Ernährung & Fitness",
-        rating: "⭐ 4.9 (85 Bewertungen)",
-        kursart: "💬 Präsenzkurse",
-        description: "Paul hilft bei Fitness und Ernährung."
-    },
-
-    anna: {
-        name: "Anna Müller",
-        category: "Deutsch & Grammatik",
-        rating: "⭐ 4.7 (110 Bewertungen)",
-        kursart: "💬 Online-Kurse",
-        description: "Anna bietet Nachhilfe in Deutsch."
-    },
-
-    julian: {
-        name: "Julian Sano",
-        category: "Mathematik Nachhilfe",
-        rating: "⭐ 4.6 (90 Bewertungen)",
-        kursart: "💬 Online-Kurse",
-        description: "Julian erklärt Mathematik verständlich."
-    }
-};
 
 /* =========================================
    INIT
@@ -97,11 +33,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initCategoryScroll();
 
+    initActiveNav();
+
     updateUI();
 
     loadFavoritesUI();
 
     updateRatingStarsState();
+
+    initAdvancedSearch();
+
+    initTutorPage();
+
+    if (document.getElementById("authCheck")) {
+        updateDashboardPage();
+        initDashboardPageTabs();
+    }
 });
 
 /* =========================================
@@ -260,53 +207,8 @@ function initSearch() {
 
     input.addEventListener("input", () => {
 
-        const value =
-            input.value.toLowerCase().trim();
-
-        if (!value) {
-
-            resetAllCards();
-
-            suggestionsBox.classList.remove("show");
-
-            suggestionsBox.innerHTML = "";
-
-            return;
-        }
-
-        const cards = qsa(".card");
-
-        let results = [];
-
-        cards.forEach(card => {
-
-            const name =
-                card.querySelector("h3")?.innerText || "";
-
-            const cat =
-                card.querySelector(".category-tag")?.innerText || "";
-
-            const full =
-                (name + " " + cat).toLowerCase();
-
-            const match = full.includes(value);
-
-            card.style.display = match ? "" : "none";
-
-            if (match) {
-
-                results.push({
-                    name,
-                    cat,
-                    element: card
-                });
-            }
-        });
-
-        toggleSections();
-
-        renderSuggestions(
-            results.slice(0, 6),
+        handleSearchInput(
+            input.value.toLowerCase().trim(),
             suggestionsBox,
             input
         );
@@ -318,6 +220,47 @@ function initSearch() {
 
             suggestionsBox.classList.remove("show");
         }
+    });
+}
+
+function handleSearchInput(value, suggestionsBox, input) {
+
+    if (!value) {
+
+        resetAllCards();
+
+        suggestionsBox.classList.remove("show");
+
+        suggestionsBox.innerHTML = "";
+
+        return;
+    }
+
+    filterCardsOnPage(value);
+
+    toggleSections();
+
+    const results =
+        searchTutorsFromData(value).slice(0, 6);
+
+    renderSuggestions(results, suggestionsBox, input);
+}
+
+function filterCardsOnPage(value) {
+
+    qsa(".card").forEach(card => {
+
+        const name =
+            card.querySelector("h3")?.innerText || "";
+
+        const cat =
+            card.querySelector(".category-tag")?.innerText || "";
+
+        const full =
+            (name + " " + cat).toLowerCase();
+
+        card.style.display =
+            full.includes(value) ? "" : "none";
     });
 }
 
@@ -345,14 +288,30 @@ function renderSuggestions(results, box, input) {
 
                 e.stopPropagation();
 
-                item.element.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-
                 input.value = item.name;
 
                 box.classList.remove("show");
+
+                if (item.id) {
+
+                    window.location.href =
+                        `tutor.html?id=${item.id}`;
+
+                    return;
+                }
+
+                if (item.element) {
+
+                    item.element.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                    return;
+                }
+
+                window.location.href =
+                    `suche.html?q=${encodeURIComponent(item.name)}`;
             });
 
             box.appendChild(div);
@@ -381,9 +340,9 @@ function toggleSections() {
 
         const visible =
             [...section.querySelectorAll(".card")]
-            .some(card =>
-                getComputedStyle(card).display !== "none"
-            );
+                .some(card =>
+                    getComputedStyle(card).display !== "none"
+                );
 
         section.style.display =
             visible ? "block" : "none";
@@ -391,6 +350,9 @@ function toggleSections() {
 }
 
 function searchTutors() {
+
+    const input = qs("#searchInput");
+    const query = input?.value.trim() || "";
 
     const first =
         qs(".card:not([style*='display: none'])");
@@ -401,7 +363,19 @@ function searchTutors() {
             behavior: "smooth",
             block: "center"
         });
+
+        return;
     }
+
+    if (query) {
+
+        window.location.href =
+            `suche.html?q=${encodeURIComponent(query)}`;
+
+        return;
+    }
+
+    window.location.href = "suche.html";
 }
 
 /* =========================================
@@ -454,7 +428,7 @@ function initRatings() {
 
                 updateRatingStarsState();
 
-                renderRatings();
+                updateDashboardPage();
             });
         });
     });
@@ -464,7 +438,7 @@ function updateRatingStarsState() {
     qsa(".stars").forEach(box => {
         const stars = box.querySelectorAll("i");
         const tutorName = getTutorNameFromCard(box);
-        
+
         const saved = currentUser?.ratings?.[tutorName];
 
         stars.forEach(star => {
@@ -541,14 +515,18 @@ function initFavorites() {
 
             loadFavoritesUI();
 
-            renderFavorites();
+            updateDashboardPage();
         });
     });
 }
 
 function loadFavoritesUI() {
 
-    qsa(".favorite i").forEach(icon => {
+    const icons = qsa(".favorite i");
+
+    if (!icons.length) return;
+
+    icons.forEach(icon => {
 
         const card =
             icon.closest(".card");
@@ -580,400 +558,16 @@ function loadFavoritesUI() {
 }
 
 /* =========================================
-   AUTH
-========================================= */
-
-function registerUser() {
-
-    const name =
-        qs("#regName").value.trim();
-
-    const email =
-        qs("#regEmail").value
-        .trim()
-        .toLowerCase();
-
-    const pass =
-        qs("#regPass").value.trim();
-
-    if (!name || !email || !pass) {
-
-        alert("Bitte alle Felder ausfüllen.");
-
-        return;
-    }
-
-    if (users.find(u => u.email === email)) {
-
-        alert("Diese E-Mail existiert bereits.");
-
-        return;
-    }
-
-    const user = {
-        id: Date.now(),
-        name,
-        email,
-        pass,
-        favorites: [],
-        ratings: {},
-        bookings: [],
-        messages: []
-    };
-
-    users.push(user);
-
-    localStorage.setItem(
-        "users",
-        JSON.stringify(users)
-    );
-
-    alert("Registrierung erfolgreich.");
-
-    closeRegister();
-
-    openLogin();
-}
-
-function loginUser() {
-
-    const email =
-        qs("#loginEmail").value
-        .trim()
-        .toLowerCase();
-
-    const pass =
-        qs("#loginPass").value.trim();
-
-    const found =
-        users.find(
-            u =>
-                u.email === email &&
-                u.pass === pass
-        );
-
-    if (!found) {
-
-        alert("Login fehlgeschlagen.");
-
-        return;
-    }
-
-    currentUser = found;
-
-    localStorage.setItem(
-        "currentUser",
-        JSON.stringify(currentUser)
-    );
-
-    updateUI();
-
-    loadFavoritesUI();
-
-    updateRatingStarsState();
-
-    closeLogin();
-
-    alert("Willkommen " + currentUser.name);
-}
-
-function logoutUser() {
-
-    currentUser = null;
-
-    localStorage.removeItem("currentUser");
-
-    updateUI();
-
-    loadFavoritesUI();
-
-    updateRatingStarsState();
-
-    closeDashboard();
-
-    alert("Erfolgreich ausgeloggt.");
-}
-
-function saveUser() {
-
-    users = users.map(u =>
-
-        u.email === currentUser.email
-            ? currentUser
-            : u
-    );
-
-    localStorage.setItem(
-        "users",
-        JSON.stringify(users)
-    );
-
-    localStorage.setItem(
-        "currentUser",
-        JSON.stringify(currentUser)
-    );
-}
-
-function requireLogin() {
-
-    alert("Bitte zuerst anmelden.");
-
-    openLogin();
-}
-
-/* =========================================
-   UI
-========================================= */
-
-function updateUI() {
-
-    const area = qs("#authArea");
-
-    if (!area) return;
-
-    if (!currentUser) {
-
-        area.innerHTML = `
-            <button class="login" onclick="openLogin()">
-                Anmelden
-            </button>
-
-            <button class="register" onclick="openRegister()">
-                Registrieren
-            </button>
-        `;
-
-    } else {
-
-        area.innerHTML = `
-            <button class="login" onclick="openDashboard()">
-                Dashboard
-            </button>
-
-            <button class="register" onclick="logoutUser()">
-                Logout
-            </button>
-        `;
-    }
-}
-
-/* =========================================
-   DASHBOARD
-========================================= */
-
-function openDashboard() {
-
-    if (!currentUser) {
-
-        requireLogin();
-
-        return;
-    }
-
-    qs("#dashboardPopup").style.display = "flex";
-
-    lockBody();
-
-    qs("#dashName").innerText =
-        currentUser.name;
-
-    qs("#dashMail").innerText =
-        currentUser.email;
-
-    initDashboardTabs();
-
-    renderDashboard();
-}
-
-function closeDashboard() {
-
-    qs("#dashboardPopup").style.display = "none";
-
-    unlockBody();
-}
-
-function initDashboardTabs() {
-
-    qsa(".tab").forEach(tab => {
-
-        tab.onclick = () => {
-
-            qsa(".tab").forEach(t =>
-                t.classList.remove("active")
-            );
-
-            qsa(".tab-content").forEach(c =>
-                c.classList.remove("active")
-            );
-
-            tab.classList.add("active");
-
-            qs("#tab-" + tab.dataset.tab)
-                .classList.add("active");
-        };
-    });
-}
-
-function renderDashboard() {
-
-    renderFavorites();
-
-    renderRatings();
-
-    renderBookings();
-}
-
-function renderFavorites() {
-
-    const container =
-        qs("#tab-favorites");
-
-    if (!container) return;
-
-    if (!currentUser.favorites.length) {
-
-        container.innerHTML =
-            "<p class='empty'>Keine Favoriten gespeichert</p>";
-
-        return;
-    }
-
-    const cards =
-        [...qsa(".card")];
-
-    container.innerHTML =
-        currentUser.favorites.map(name => {
-
-            const card =
-                cards.find(c =>
-                    c.querySelector("h3").innerText === name
-                );
-
-            if (!card) return "";
-
-            const img =
-                card.querySelector("img").src;
-
-            const category =
-                card.querySelector(".category-tag").innerText;
-
-            return `
-                <div class="fav-card"
-                     onclick="scrollToTutor('${name}')">
-
-                    <img src="${img}">
-
-                    <div>
-                        <h4>${name}</h4>
-                        <p>${category}</p>
-                    </div>
-                </div>
-            `;
-        }).join("");
-}
-
-function renderRatings() {
-
-    const container =
-        qs("#tab-ratings");
-
-    if (!container || !currentUser) return;
-
-    if (
-        !currentUser.ratings ||
-        !Object.keys(currentUser.ratings).length
-    ) {
-
-        container.innerHTML =
-            "<p class='empty'>Keine Bewertungen</p>";
-
-        return;
-    }
-
-    container.innerHTML =
-        Object.entries(currentUser.ratings)
-        .map(([name, val]) => `
-            <div class="dash-line">
-                <span>${name}</span>
-                <strong>${val} ⭐</strong>
-            </div>
-        `).join("");
-}
-
-function renderBookings() {
-
-    const container =
-        qs("#tab-bookings");
-
-    if (!container || !currentUser) return;
-
-    if (!currentUser.bookings.length) {
-
-        container.innerHTML =
-            "<p class='empty'>Keine Buchungen</p>";
-
-        return;
-    }
-
-    container.innerHTML =
-        currentUser.bookings
-        .map(b =>
-            `<div class="dash-line">${b}</div>`
-        )
-        .join("");
-}
-
-function scrollToTutor(name) {
-
-    qsa(".card").forEach(card => {
-
-        if (
-            card.querySelector("h3").innerText === name
-        ) {
-
-            card.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
-    });
-
-    closeDashboard();
-}
-
-/* =========================================
-   BOOKINGS
-========================================= */
-
-function bookTutor(name) {
-
-    if (!currentUser) {
-
-        requireLogin();
-
-        return;
-    }
-
-    currentUser.bookings.push(
-        "Session bei " + name + " angefragt"
-    );
-
-    saveUser();
-
-    renderBookings();
-
-    alert("Buchung gespeichert.");
-}
-
-/* =========================================
-   POPUPS
+   TUTOR POPUP
 ========================================= */
 
 function openTutorPopup(id) {
 
     const tutor = tutorData[id];
 
-    if (!tutor) return;
+    const popup = qs("#tutorPopup");
+
+    if (!tutor || !popup) return;
 
     qs("#popup-name").innerText =
         tutor.name;
@@ -995,58 +589,19 @@ function openTutorPopup(id) {
         bookTutor(tutor.name);
     };
 
-    qs("#tutorPopup").style.display = "flex";
+    popup.style.display = "flex";
 
     lockBody();
 }
 
 function closeTutorPopup() {
 
-    qs("#tutorPopup").style.display = "none";
+    const popup = qs("#tutorPopup");
+    if (!popup) return;
+
+    popup.style.display = "none";
 
     unlockBody();
-}
-
-function openLogin() {
-
-    qs("#loginPopup").style.display = "flex";
-
-    lockBody();
-}
-
-function closeLogin() {
-
-    qs("#loginPopup").style.display = "none";
-
-    unlockBody();
-}
-
-function openRegister() {
-
-    qs("#registerPopup").style.display = "flex";
-
-    lockBody();
-}
-
-function closeRegister() {
-
-    qs("#registerPopup").style.display = "none";
-
-    unlockBody();
-}
-
-function switchToRegister() {
-
-    closeLogin();
-
-    openRegister();
-}
-
-function switchToLogin() {
-
-    closeRegister();
-
-    openLogin();
 }
 
 /* =========================================
@@ -1105,7 +660,7 @@ function initCategoryScroll() {
 
     qsa(".category-list a").forEach(link => {
 
-        link.addEventListener("click", function(e) {
+        link.addEventListener("click", function (e) {
 
             e.preventDefault();
 
@@ -1184,37 +739,303 @@ function initCursorGlow() {
 }
 
 /* =========================================
-   BODY LOCK
+   NAVIGATION HIGHLIGHTING
 ========================================= */
-
-function lockBody() {
-
-    document.body.style.overflow = "hidden";
-}
-
-function unlockBody() {
-
-    document.body.style.overflow = "";
-}
-
-/* =========================================
-   NEU
-========================================= */
-
-initActiveNav();
 
 function initActiveNav() {
+    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const normalizedPage = currentPage === "" ? "index.html" : currentPage;
 
-    const currentPage =
-        window.location.pathname.split("/").pop();
+    document.querySelectorAll("#mobileNav a").forEach(link => {
+        const href = link.getAttribute("href");
+        const isActive =
+            href === normalizedPage ||
+            (normalizedPage === "tutor.html" && href === "suche.html");
 
-    document.querySelectorAll("#mobileNav a")
-        .forEach(link => {
+        if (isActive) {
+            link.classList.add("active-page");
+        } else {
+            link.classList.remove("active-page");
+        }
+    });
 
-            const href = link.getAttribute("href");
+    const bottomNavMap = {
+        "index.html": 0,
+        "suche.html": 1,
+        "tutor.html": 1,
+        "meine-kurse.html": 2,
+        "tutor-werden.html": 3
+    };
 
-            if (href === currentPage) {
-                link.classList.add("active-page");
-            }
+    const bottomNavLinks = document.querySelectorAll(".bottom-nav a");
+    const pageIndex = bottomNavMap[normalizedPage];
+
+    bottomNavLinks.forEach((link, idx) => {
+        if (idx === pageIndex) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+
+function initAdvancedSearch() {
+
+    const searchPageInput =
+        document.querySelector("#searchPageInput");
+
+    const headerSearchInput =
+        document.querySelector("#searchInput");
+
+    const category =
+        document.querySelector("#categoryFilter");
+
+    const kurs =
+        document.querySelector("#kursFilter");
+
+    const rating =
+        document.querySelector("#ratingFilter");
+
+    if (!searchPageInput && !headerSearchInput) return;
+
+    const inputs = [searchPageInput, headerSearchInput, category, kurs, rating].filter(el => el);
+
+    inputs.forEach(el => {
+        el.addEventListener("input", filterTutors);
+        el.addEventListener("change", filterTutors);
+    });
+
+    if (headerSearchInput && searchPageInput) {
+        const suggestionsBox = document.querySelector("#suggestions");
+        if (suggestionsBox) {
+            headerSearchInput.addEventListener("input", () => {
+                const value = headerSearchInput.value.toLowerCase().trim();
+
+                searchPageInput.value = value;
+
+                if (!value) {
+                    suggestionsBox.classList.remove("show");
+                    suggestionsBox.innerHTML = "";
+                    filterTutors();
+                    return;
+                }
+
+                const results =
+                    searchTutorsFromData(value).slice(0, 6);
+
+                renderSuggestions(results, suggestionsBox, headerSearchInput);
+                filterTutors();
+            });
+
+            searchPageInput.addEventListener("input", () => {
+                headerSearchInput.value = searchPageInput.value;
+                filterTutors();
+            });
+
+            document.addEventListener("click", e => {
+                if (!e.target.closest(".search-bar")) {
+                    suggestionsBox.classList.remove("show");
+                }
+            });
+        }
+    }
+
+    applySearchQueryFromUrl();
+
+    filterTutors();
+}
+
+function applySearchQueryFromUrl() {
+
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+
+    if (!q || !window.location.pathname.includes("suche.html")) return;
+
+    const searchPageInput = document.querySelector("#searchPageInput");
+    const headerSearchInput = document.querySelector("#searchInput");
+
+    if (searchPageInput) searchPageInput.value = q;
+    if (headerSearchInput) headerSearchInput.value = q;
+}
+
+function filterTutors() {
+
+    const searchPageInput = document.querySelector("#searchPageInput");
+    const searchInput = document.querySelector("#searchInput");
+
+    const search =
+        (searchPageInput?.value || searchInput?.value || "").toLowerCase().trim() || "";
+
+    const categoryFilter =
+        document.querySelector("#categoryFilter")
+            ?.value.toLowerCase() || "";
+
+    const kurs =
+        document.querySelector("#kursFilter")
+            ?.value.toLowerCase() || "";
+
+    const rating =
+        parseFloat(
+            document.querySelector("#ratingFilter")?.value
+        ) || 0;
+
+    let visibleCount = 0;
+
+    document.querySelectorAll(".card")
+        .forEach(card => {
+
+            const name =
+                card.querySelector("h3")
+                    ?.innerText.toLowerCase() || "";
+
+            const cat =
+                card.querySelector(".category-tag")
+                    ?.innerText.toLowerCase() || "";
+
+            const kursart =
+                card.querySelector(".kursart")
+                    ?.innerText.toLowerCase() || "";
+
+            const ratingText =
+                card.querySelector(".rating")
+                    ?.innerText || "";
+
+            const cardRating =
+                parseFloat(
+                    ratingText.match(/\d\.\d/)?.[0]
+                ) || 0;
+
+            const matchesSearch =
+                !search || (name + " " + cat).includes(search);
+
+            const cardFilterCategory = getFilterCategory(cat);
+            const matchesCategory =
+                !categoryFilter || cardFilterCategory === categoryFilter;
+
+            const matchesKurs =
+                !kurs || kursart.includes(kurs);
+
+            const matchesRating =
+                cardRating >= rating;
+
+            const visible =
+                matchesSearch &&
+                matchesCategory &&
+                matchesKurs &&
+                matchesRating;
+
+            card.style.display =
+                visible ? "" : "none";
+
+            if (visible) visibleCount++;
         });
+
+    const resultsCount = document.querySelector("#resultsCount") || document.querySelector("#resultCount");
+    if (resultsCount) {
+        resultsCount.innerText =
+            `${visibleCount} Tutoren gefunden`;
+    }
+
+    toggleSections();
+}
+
+function openTutorPage(id) {
+
+    window.location.href = `tutor.html?id=${id}`;
+}
+
+function initTutorPage() {
+
+    if (!window.location.pathname
+        .includes("tutor.html")) return;
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+
+    const tutor = tutorData[id];
+
+    if (!tutor) return;
+
+    document.querySelector("#tutorName")
+        .innerText = tutor.name;
+
+    document.querySelector("#tutorCategory")
+        .innerText = tutor.category;
+
+    document.querySelector("#tutorRating")
+        .innerText = tutor.rating;
+
+    document.querySelector("#tutorKursart")
+        .innerText = tutor.kursart;
+
+    document.querySelector("#tutorDescription")
+        .innerText = tutor.description;
+
+    document.querySelector("#tutorImage")
+        .src = `images/${id}.jpg`;
+
+    window.currentTutorId = id;
+    window.currentTutorName = tutor.name;
+    window.currentTutorPrice = tutor.price;
+
+    const messageBtn =
+        document.querySelector("#messageBtn");
+
+    if (messageBtn) {
+        messageBtn.onclick = () => openMessagePopup();
+    }
+
+    const sessionBookBtn =
+        document.querySelector("#sessionBookBtn");
+
+    if (sessionBookBtn) {
+        sessionBookBtn.onclick = () => bookTutor(tutor.name);
+    }
+
+    document.title =
+        `${tutor.name} | Tutorlink`;
+
+    const aboutEl = document.querySelector("#tutorAbout");
+    if (aboutEl) aboutEl.innerText = tutor.about;
+
+    initCreatorCodeUI();
+
+    const statsEls = document.querySelectorAll(".mini-stats div");
+    if (statsEls.length >= 3) {
+        statsEls[0].innerHTML = `<strong>${tutor.sessions}+</strong><span>Sessions</span>`;
+        statsEls[1].innerHTML = `<strong>${tutor.rating_score}</strong><span>Bewertung</span>`;
+        statsEls[2].innerHTML = `<strong>${tutor.experience}</strong><span>Erfahrung</span>`;
+    }
+
+    const skillsList = document.querySelector(".skills-list");
+    if (skillsList && tutor.skills) {
+        skillsList.innerHTML = "";
+        tutor.skills.forEach(skill => {
+            const span = document.createElement("span");
+            span.innerText = skill;
+            skillsList.appendChild(span);
+        });
+    }
+
+    const resumeSection = document.querySelector(".tutor-resume");
+    if (resumeSection && tutor.resume) {
+        const existingItems = resumeSection.querySelectorAll(".resume-item");
+        existingItems.forEach(item => item.remove());
+
+        tutor.resume.forEach(entry => {
+            const item = document.createElement("div");
+            item.className = "resume-item";
+            item.innerHTML = `
+                <span>${entry.period}</span>
+                <div>
+                    <h3>${entry.title}</h3>
+                    <p>${entry.company}</p>
+                </div>
+            `;
+            resumeSection.appendChild(item);
+        });
+    }
 }

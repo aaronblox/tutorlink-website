@@ -1,0 +1,14 @@
+Tutorlink TO-DO
+
+Bug Fixes
+
+Großes Problem mit "meine-kurse.html", nicht mit allen Seiten gesynct - JavaScript Code in "script.js" bringen --> Speichern funktioniert somit nicht (alles auf eine Datei bringen)
+Alle Popups auf allen Seiten vereinheitlichen (sind bei "Meine Kurse" verschieden, darunter Dashboard, Anmelde- und Registrierungsfenster usw.)
+Fehlermeldungen sind beispielsweise unter den vorherigen Popups, das heißt nicht sichtbar, da nochmal drüber gucken
+"bottom-nav" ist immer noch nicht gehighlighted
+"Verifiziert-Tag" auf eine Linie bringen, etwas verschoben
+
+Als nächstes:
+
+Creator-Code-System (Rabatt)
+Alle Seiten anklickbar

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
+    <title>Tutorlink - Tutor werden</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="bottom-nav">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <a href="suche.html"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="meine-kurse.html"><i class="fa-solid fa-book-open"></i></a>
+        <a href="tutor-werden.html"><i class="fa-solid fa-user-plus"></i></a>
+    </div>
+
+    <header class="header">
+        <div class="mobile-top">
+            <button class="burger" onclick="toggleMenu()">
+                ☰
+            </button>
+        </div>
+
+        <div class="logo">
+            <img src="images/tutorlink_logo_transparent.png" alt="Tutorlink Logo">
+            <span>Tutorlink</span>
+        </div>
+
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Suche nach Tutoren oder Fähigkeiten...">
+            <button onclick="searchTutors()">Suche</button>
+            <div class="search-suggestions" id="suggestions"></div>
+        </div>
+
+        <div class="actions" id="authArea">
+            <button class="login" onclick="openLogin()">Anmelden</button>
+            <button class="register" onclick="openRegister()">Registrieren</button>
+        </div>
+    </header>
+
+    <nav id="mobileNav">
+        <button class="close-nav" onclick="toggleMenu()">✕</button>
+
+        <a href="index.html">Start</a>
+        <a href="suche.html">Suche</a>
+        <a href="tutor-werden.html">Tutor werden</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="meine-kurse.html">Meine Kurse</a>
+    </nav>
+
+    <main class="page-layout tutor-werden-page">
+
+        <section class="page-hero page-hero--tutor-werden">
+            <div class="page-hero-bg" aria-hidden="true"></div>
+
+            <div class="page-hero-content">
+                <h1>Werde <span class="highlight">Tutor</span> bei Tutorlink</h1>
+                <p class="hero-lead">Teile dein Wissen, erreiche neue Schüler und gestalte deinen Unterricht flexibel.</p>
+
+                <div class="auswahl hero-actions">
+                    <button type="button" class="btn" onclick="scrollToBewerbung()">
+                        <i class="fa-solid fa-file-pen"></i>
+                        Zur Bewerbung
+                    </button>
+                    <a href="suche.html" class="btn secondary">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Tutoren ansehen
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="steps-section">
+            <h2 class="section-heading section-heading--center">So funktioniert es</h2>
+
+            <div class="steps-grid">
+                <div class="step-box">
+                    <span>1</span>
+                    <h3>Bewerbung senden</h3>
+                    <p>Fülle das Formular mit deinen Skills und Erfahrungen aus.</p>
+                </div>
+
+                <div class="step-box">
+                    <span>2</span>
+                    <h3>Freigabe erhalten</h3>
+                    <p>Unser Team prüft dein Profil und gibt es frei.</p>
+                </div>
+
+                <div class="step-box">
+                    <span>3</span>
+                    <h3>Erste Session</h3>
+                    <p>Starte mit deinem ersten Schüler über Tutorlink.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="tutor-apply-section" id="bewerbung">
+            <div class="tutor-apply-card">
+                <div class="tutor-apply-header">
+                    <h2><i class="fa-solid fa-chalkboard-user"></i> Tutor-Bewerbung</h2>
+                    <p>Erzähl uns, was du unterrichten möchtest. Alle mit <span class="required">*</span> markierten Felder sind Pflicht.</p>
+                </div>
+
+                <form id="tutorApplyForm" class="tutor-apply-form">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="applyName">Name <span class="required">*</span></label>
+                            <input type="text" id="applyName" placeholder="Max Mustermann" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="applyEmail">E-Mail <span class="required">*</span></label>
+                            <input type="email" id="applyEmail" placeholder="name@beispiel.de" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="applyCategory">Fach / Kategorie <span class="required">*</span></label>
+                            <select id="applyCategory" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="technik">Technik</option>
+                                <option value="kreativ">Kreativ</option>
+                                <option value="sport">Sport</option>
+                                <option value="sprachen">Sprachen</option>
+                                <option value="musik">Musik</option>
+                                <option value="wissenschaft">Wissenschaft</option>
+                                <option value="kochen">Kochen</option>
+                                <option value="business">Business</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="applyKursart">Kursart <span class="required">*</span></label>
+                            <select id="applyKursart" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="online">Online-Kurse</option>
+                                <option value="praesenz">Präsenzkurse</option>
+                                <option value="beides">Online & Präsenz</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="applyExperience">Erfahrung <span class="required">*</span></label>
+                            <input type="text" id="applyExperience" placeholder="z. B. 5 Jahre, Studium, Zertifikate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="applyPrice">Stundenpreis (€) <span class="required">*</span></label>
+                            <input type="number" id="applyPrice" min="10" max="200" placeholder="35" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="applyDescription">Über dich & deinen Unterricht <span class="required">*</span></label>
+                        <textarea id="applyDescription" rows="5"
+                            placeholder="Beschreibe kurz deine Qualifikation, deinen Unterrichtsstil und was Schüler bei dir lernen können..."
+                            required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Bewerbung absenden
+                        </button>
+                        <button type="reset" class="btn secondary">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Zurücksetzen
+                        </button>
+                    </div>
+
+                    <p class="form-hint" id="applyFormHint">
+                        Noch kein Konto?
+                        <a href="#" onclick="openRegister(); return false;">Hier registrieren</a>
+                        – die Bewerbung kannst du auch ohne Anmeldung absenden.
+                    </p>
+                </form>
+            </div>
+        </section>
+
+        <section class="final-cta">
+            <h1>Fragen zur Bewerbung?</h1>
+            <p>Unser Team prüft jede Anfrage persönlich und meldet sich per E-Mail bei dir.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="socials">
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+        <a href="datenschutz.html">Datenschutzerklärung</a>
+        <a href="impressum.html">Impressum</a>
+        <p>© 2026 Tutorlink</p>
+        <p>PZ Gräulinger Str. 15, 40625 Düsseldorf</p>
+    </footer>
+
+    <div class="popup" id="loginPopup">
+        <div class="popup-content">
+            <span class="close" onclick="closeLogin()">&times;</span>
+            <h2>Anmelden</h2>
+
+            <input type="text" id="loginEmail" placeholder="E-Mail">
+            <input type="password" id="loginPass" placeholder="Passwort">
+
+            <button class="btn" onclick="loginUser()">Login</button>
+
+            <p>Noch kein Konto?</p>
+            <button class="switch-btn" onclick="switchToRegister()">Registrieren</button>
+        </div>
+    </div>
+
+    <div class="popup" id="registerPopup">
+        <div class="popup-content">
+            <span class="close" onclick="closeRegister()">&times;</span>
+            <h2>Registrieren</h2>
+
+            <input type="text" id="regName" placeholder="Name">
+            <input type="text" id="regEmail" placeholder="E-Mail">
+            <input type="password" id="regPass" placeholder="Passwort">
+
+            <button class="btn" onclick="registerUser()">Registrieren</button>
+
+            <p>Schon ein Konto?</p>
+            <button class="switch-btn" onclick="switchToLogin()">Anmelden</button>
+        </div>
+    </div>
+
+    <div class="cursor-glow"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/creator-code.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cookies.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/tutor-bewerbung.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

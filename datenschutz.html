@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
-    <title>Tutorlink - Über uns</title>
+    <title>Tutorlink - Datenschutz</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -53,47 +53,56 @@
         <a href="meine-kurse.html">Meine Kurse</a>
     </nav>
 
-    <main class="content-page">
+    <main class="content-page legal-page">
         <section class="search-hero">
-            <h1>Über Tutorlink</h1>
-            <p>Persönliches Lernen – direkt mit echten Tutoren.</p>
+            <h1>Datenschutzerklärung</h1>
+            <p>Stand: Mai 2026</p>
         </section>
 
-        <section class="content-block">
-            <h2>Unsere Mission</h2>
+        <section class="content-block legal-text">
+            <h2>1. Verantwortlicher</h2>
             <p>
-                Tutorlink verbindet Lernende mit qualifizierten Tutoren für individuelle Sessions.
-                Anders als unpersönliche Online-Kurse setzen wir auf echte Menschen, flexible Termine
-                und direkten Austausch.
+                Tutorlink (Schulprojekt)<br>
+                Aaron Hinz, Clemens Rehling<br>
+                PZ Gräulinger Str. 15<br>
+                40625 Düsseldorf<br>
+                E-Mail: kontakt@tutorlink.de
             </p>
-        </section>
 
-        <section class="content-block">
-            <h2>Was uns ausmacht</h2>
-            <div class="steps-grid">
-                <div class="step-box">
-                    <span>✓</span>
-                    <h3>Geprüfte Tutoren</h3>
-                    <p>Jeder Tutor wird von unserem Team geprüft, bevor er live geht.</p>
-                </div>
-                <div class="step-box">
-                    <span>✓</span>
-                    <h3>Flexibel lernen</h3>
-                    <p>Online oder vor Ort – du entscheidest, was zu dir passt.</p>
-                </div>
-                <div class="step-box">
-                    <span>✓</span>
-                    <h3>Fair & transparent</h3>
-                    <p>Klare Preise, ehrliche Bewertungen und Creator-Codes für Rabatte.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="content-block">
-            <h2>Unser Team</h2>
+            <h2>2. Erhebung und Speicherung von Daten</h2>
             <p>
-                Tutorlink ist ein Schulprojekt aus Düsseldorf. Wir entwickeln die Plattform
-                Schritt für Schritt weiter – mit Fokus auf einfache Bedienung und echte Lernerfolge.
+                Bei der Nutzung von Tutorlink werden Daten lokal in deinem Browser gespeichert
+                (localStorage), z. B. für Registrierung, Favoriten, Bewertungen und Buchungen.
+                Es findet keine Übertragung an externe Server statt – dies ist eine Demo-Plattform
+                für schulische Zwecke.
+            </p>
+
+            <h2>3. Welche Daten werden gespeichert?</h2>
+            <ul>
+                <li>Name und E-Mail bei der Registrierung</li>
+                <li>Buchungen, Favoriten und Bewertungen</li>
+                <li>Tutor-Bewerbungen, Kontaktanfragen und Nachrichten an Tutoren (lokal)</li>
+                <li>Aktive Creator-Codes für Rabatte</li>
+            </ul>
+
+            <h2>4. Deine Rechte</h2>
+            <p>
+                Du kannst gespeicherte Daten jederzeit löschen, indem du den localStorage
+                deines Browsers leerst. Bei Fragen wende dich an kontakt@tutorlink.de.
+            </p>
+
+            <h2>5. Cookies & Einwilligung</h2>
+            <p>
+                Tutorlink verwendet keine Tracking-Cookies von Drittanbietern.
+                Beim ersten Besuch erscheint ein Cookie-Hinweis. Deine Wahl wird
+                lokal gespeichert (localStorage, Schlüssel „cookieConsent“):
+            </p>
+            <ul>
+                <li><strong>Alle akzeptieren:</strong> Vollständige Nutzung inkl. Favoriten, Bewertungen und Creator-Codes</li>
+                <li><strong>Nur notwendige:</strong> Minimale Speicherung für die Grundfunktion der Seite</li>
+            </ul>
+            <p>
+                Du kannst deine Auswahl jederzeit über „Cookie-Einstellungen“ im Footer ändern.
             </p>
         </section>
     </main>
@@ -109,31 +118,6 @@
         <p>© 2026 Tutorlink</p>
         <p>PZ Gräulinger Str. 15, 40625 Düsseldorf</p>
     </footer>
-
-    <div class="popup" id="loginPopup">
-        <div class="popup-content">
-            <span class="close" onclick="closeLogin()">&times;</span>
-            <h2>Anmelden</h2>
-            <input type="text" id="loginEmail" placeholder="E-Mail">
-            <input type="password" id="loginPass" placeholder="Passwort">
-            <button class="btn" onclick="loginUser()">Login</button>
-            <p>Noch kein Konto?</p>
-            <button class="switch-btn" onclick="switchToRegister()">Registrieren</button>
-        </div>
-    </div>
-
-    <div class="popup" id="registerPopup">
-        <div class="popup-content">
-            <span class="close" onclick="closeRegister()">&times;</span>
-            <h2>Registrieren</h2>
-            <input type="text" id="regName" placeholder="Name">
-            <input type="text" id="regEmail" placeholder="E-Mail">
-            <input type="password" id="regPass" placeholder="Passwort">
-            <button class="btn" onclick="registerUser()">Registrieren</button>
-            <p>Schon ein Konto?</p>
-            <button class="switch-btn" onclick="switchToLogin()">Anmelden</button>
-        </div>
-    </div>
 
     <div class="cursor-glow"></div>
 
