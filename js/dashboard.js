@@ -95,18 +95,10 @@ function renderDashboardPageBookings() {
         return;
     }
 
-    const uniqueBookings = {};
-    currentUser.bookings.forEach(booking => {
-        if (typeof booking === "object") {
+    container.innerHTML = currentUser.bookings
+        .filter(booking => typeof booking === "object")
+        .map(booking => {
             const tutorName = booking.tutorName || booking.name || "Tutor";
-            if (!uniqueBookings[tutorName]) {
-                uniqueBookings[tutorName] = booking;
-            }
-        }
-    });
-
-    container.innerHTML = Object.entries(uniqueBookings)
-        .map(([tutorName, booking]) => {
             const priceInfo =
                 booking.finalPrice && booking.discount > 0
                     ? `<p class="booking-price">${booking.finalPrice}€ <small>(${booking.discount}% Rabatt)</small></p>`
