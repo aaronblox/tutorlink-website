@@ -90,15 +90,36 @@ function renderDashboardPageBookings() {
     const container = document.getElementById("bookingsContent");
 
     if (!container) return;
-    if (!currentUser || !currentUser.bookings.length) {
+    if (!currentUser || !currentUser.bookings || currentUser.bookings.length === 0) {
         container.innerHTML = "<p class='empty'><i class='fa-solid fa-inbox'></i> Keine Buchungen vorhanden</p>";
         return;
     }
 
-    container.innerHTML = currentUser.bookings
-        .filter(booking => typeof booking === "object")
-        .map(booking => {
-            const tutorName = booking.tutorName || booking.name || "Tutor";
+    // Filter out valid booking objects
+    const validBookings = currentUser.bookings.filter(booking => booking && typeof booking === "object");
+    
+    if (validBookings.length === 0) {
+        container.innerHTML = "<p class='empty'><i class='fa-solid fa-inbox'></i> Keine Buchungen vorhanden</p>";
+        return;
+    }
+
+    // Group bookings by tutor name and count them
+    const bookingsByTutor = {};
+    validBookings.forEach(booking => {
+        const tutorName = booking.tutorName || booking.name || "Tutor";
+        if (!bookingsByTutor[tutorName]) {
+            bookingsByTutor[tutorName] = {
+                count: 0,
+                booking: booking
+            };
+        }
+        bookingsByTutor[tutorName].count++;
+    });
+
+    container.innerHTML = Object.entries(bookingsByTutor)
+        .map(([tutorName, data]) => {
+            const booking = data.booking;
+            const count = data.count;
             const priceInfo =
                 booking.finalPrice && booking.discount > 0
                     ? `<p class="booking-price">${booking.finalPrice}€ <small>(${booking.discount}% Rabatt)</small></p>`
@@ -106,10 +127,12 @@ function renderDashboardPageBookings() {
                         ? `<p class="booking-price">${booking.finalPrice}€ / Stunde</p>`
                         : "";
 
+            const countBadge = count > 1 ? `<span style="color: #d4af37; font-size: 0.9rem; margin-left: 8px;">(${count}x gebucht)</span>` : "";
+
             return `
             <div class="booking-card">
                 <div class="booking-info">
-                    <h4>${tutorName}</h4>
+                    <h4>${tutorName}${countBadge}</h4>
                     <p class="booking-status">✓ Session angefordert</p>
                     ${priceInfo}
                 </div>
