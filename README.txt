@@ -1,5 +1,4 @@
 Tutorlink Website 2026 (Schulprojekt)
-Erstellt von: Aaron Hinz
 
 Startdatei:
 index.html
